@@ -1,8 +1,9 @@
 import prisma from "../libs/prisma/prisma.ts"
 import bcrypt from "bcryptjs"
+import { UserRegisterInput } from "../types/types.ts"
 
 export const auth = {
-    register: async (userData: {email: string, password: string, name: string}) => { 
+    register: async (userData: UserRegisterInput) => { 
     
         
         const user = await prisma.user.findUnique({
