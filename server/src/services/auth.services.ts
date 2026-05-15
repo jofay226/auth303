@@ -1,6 +1,6 @@
 import prisma from "../libs/prisma/prisma.ts"
 import bcrypt from "bcryptjs"
-import { UserRegisterInput } from "../types/types.ts"
+import { LoginInput, UserRegisterInput } from "../types/types.ts"
 
 export const auth = {
     register: async (userData: UserRegisterInput) => { 
@@ -27,5 +27,24 @@ export const auth = {
         return {message: "successfully registered", statusCode: 201, data: newUser}
 
 
+    },
+
+    login: async (loginData: LoginInput ) => {
+        const existingUser = await prisma.user.findUnique({
+            where: {email: loginData.email}
+        })
+     
+        if(!existingUser){
+            return {statusCode: 409, message: "authentication failed", data: null}
+        }
+
+        const passwordMatch = await bcrypt.compare(loginData.password, existingUser.password)
+
+        if(!passwordMatch) {
+            return {statusCode: 409, message: "authentication failed", data: null}
+        }
+
+        return  {statusCode: 200, message: "success", data: existingUser}
+        
     }
 }

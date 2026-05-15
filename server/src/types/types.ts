@@ -3,3 +3,5 @@ export type UserRegisterInput = {
     email: string,
     password: string
 }
+
+export type LoginInput = Omit<UserRegisterInput, "name">
