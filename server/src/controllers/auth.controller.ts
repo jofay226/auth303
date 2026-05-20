@@ -37,12 +37,20 @@ export const login = async (req: Request, res: Response) => {
     }
 
 
-    res.cookie("refreshToken", generateRefreshToken(result.data?.id!))
+    res.cookie("refreshToken", generateRefreshToken(result.data?.id!), {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict"
+    })
     
     res.status(200).json(generateAccessToken(result.data?.id!))
 }
 
 
+
+export const verifyMe = async (req: Request, res: Response) => {
+    return res.json({message: "access granted"}) 
+}
 
 
 
