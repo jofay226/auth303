@@ -2,7 +2,8 @@
 import { loginSchemaZod, registerSchemaZod } from "../libs/zod/zod.ts";
 import { auth } from "../services/auth.services.ts";
 import type {Request, Response} from "express";
-import { generateAccessToken, generateRefreshToken } from "../utils/generateTokens.ts";
+import { generateAccessToken, generateRefreshToken, REFRESH_TOKEN_SECRET } from "../utils/generateTokens.ts";
+import jwt from 'jsonwebtoken';
 
 
 
@@ -53,5 +54,18 @@ export const verifyMe = async (req: Request, res: Response) => {
 }
 
 
+export const refresh =  async (req: Request, res: Response) => {
+    const refreshToken = req.cookies["refreshToken"];
 
+    if(!refreshToken){
+        res.status(401).json({message: "missing token in cookie"})
+    }
+    try {
+        const decoded: any = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+        const newAccessToken = generateAccessToken(decoded.id)
+        res.json(newAccessToken)
+    } catch(e){
+        return res.status(401).json({message: "expired or invalid token"})
+    }
+}
 
