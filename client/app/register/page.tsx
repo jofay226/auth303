@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
+import axios from "axios";
 
 function RegisterPage() {
   const [form, setForm] = useState({
@@ -13,7 +14,10 @@ function RegisterPage() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  console.log(form);
+  const registerHandler = async () => {
+    const res = await axios.post("http://localhost:4000/auth/register", form);
+    console.log(res);
+  };
 
   return (
     <div>
@@ -35,7 +39,7 @@ function RegisterPage() {
         placeholder="password"
         type="text"
       />
-      <button>Sign Up</button>
+      <button onClick={registerHandler}>Sign Up</button>
     </div>
   );
 }
